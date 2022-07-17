@@ -45,7 +45,6 @@ describe("When converting moves to a hierarchy", function () {
         ]))
     });
 
-
     test("A game with 3 variations of ply 2 is handled properly", () => {
         let result = MoveNode.fromPgn("1. d3 d6 (1... e6) (1... f6) *");
 
