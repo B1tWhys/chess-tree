@@ -1,8 +1,11 @@
 import {parseGame} from "@mliebelt/pgn-parser";
 
 export class MoveNode {
+    name: string;
+    children: Array<MoveNode>;
+    turn: string;
 
-    constructor(name, children, turn) {
+    constructor(name: string, turn: string, children: Array<MoveNode>) {
         this.name = name;
         this.children = children || [];
         if (turn) this.turn = turn;
@@ -26,7 +29,7 @@ export class MoveNode {
         if (moves.length === 0) return null;
 
         let jsonMove = moves[0];
-        let moveNode = new MoveNode(jsonMove.notation.notation, [], jsonMove.turn);
+        let moveNode = new MoveNode(jsonMove.notation.notation, jsonMove.turn, []);
 
         let nextMainlineMove = this.fromJsonMoveLine(moves.slice(1));
         if (nextMainlineMove) {
