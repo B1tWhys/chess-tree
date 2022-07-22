@@ -10,6 +10,10 @@ export class MoveNode {
 
     static fromPgn(pgnStr) {
         let jsonGame = parseGame(pgnStr);
+        return this.fromJsonGame(jsonGame);
+    }
+
+    static fromJsonGame(jsonGame) {
         if (jsonGame.moves.length === 0) {
             return null;
         }
