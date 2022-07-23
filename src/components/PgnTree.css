@@ -3,6 +3,13 @@
     width: 100vw;
     margin: 0;
     padding: 0;
+    background-color: rgb(48, 45, 42);
+}
+
+textarea {
+    font-family: 'Overpass Mono', monospace;
+    background-color: rgb(48, 45, 42);
+    color: white;
 }
 
 .move-node-container {
@@ -13,17 +20,17 @@
 }
 
 .white-move circle {
-    fill: white
+    fill: rgb(117, 149, 85);
 }
 
 .white-move text {
-    fill: black;
+    fill: rgb(238, 237, 210);
 }
 
 .black-move circle {
-    fill: black
+    fill: rgb(238, 237, 210);
 }
 
 .black-move text {
-    fill: white;
+    fill: rgb(117, 149, 85);
 }
