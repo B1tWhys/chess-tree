@@ -11,6 +11,10 @@ export class MoveNode {
         if (turn) this.turn = turn;
     }
 
+    get isWhiteTurn() {
+        return this.turn === 'w';
+    }
+
     static fromPgn(pgnStr) {
         let jsonGame = parseGame(pgnStr);
         return this.fromJsonGame(jsonGame);

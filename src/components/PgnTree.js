@@ -35,10 +35,8 @@ class PgnTree extends Component {
 
 
     renderNode({nodeDatum, toggleNode}) {
-        let isWhiteTurn = nodeDatum.turn === 'w';
         return <TreeNode
-            turnName={nodeDatum.name}
-            isWhiteTurn={isWhiteTurn}
+            move={nodeDatum}
             onClick={() => {
                 this.handleNodeClick(nodeDatum);
             }}
@@ -75,6 +73,7 @@ class PgnTree extends Component {
                       depthFactor={80}
                       separation={{siblings: .5, nonSiblings: 1}}
                       renderCustomNodeElement={(elementProps) => this.renderNode(elementProps)}
+                      pathClassFunc={(a, b) => "tree-link"}
                 />
             </div>
         );

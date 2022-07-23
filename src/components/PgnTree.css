@@ -18,19 +18,3 @@ textarea {
 .move-node-container>text {
     stroke-width: 0;
 }
-
-.white-move circle {
-    fill: rgb(117, 149, 85);
-}
-
-.white-move text {
-    fill: rgb(238, 237, 210);
-}
-
-.black-move circle {
-    fill: rgb(238, 237, 210);
-}
-
-.black-move text {
-    fill: rgb(117, 149, 85);
-}
