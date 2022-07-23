@@ -1,7 +1,7 @@
 import './App.css';
 import PgnTree from "./components/PgnTree";
 import {Component} from "react";
-import {MoveNode} from "./types/MoveNode";
+import {MoveNode} from "./types/MoveNode.ts";
 import ChessComGameHistoryImpl from "./services/ChessComGameHistoryImpl.ts";
 
 class App extends Component {

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {MoveNode} from "../types/MoveNode";
+import {MoveNode} from "../types/MoveNode.ts";
 import Tree from 'react-d3-tree';
 import './PgnTree.css';
 import PropTypes from "prop-types";
