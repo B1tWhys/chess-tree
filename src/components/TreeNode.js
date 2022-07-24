@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {MoveNode} from "../types/MoveNode.ts";
 
-const lightColor = "rgb(117, 149, 85)";
-const darkColor = "rgb(238, 237, 210)";
+const darkColor = "rgb(117, 149, 85)";
+const lightColor = "rgb(238, 237, 210)";
 
 const TreeNode = (props) => {
     return (<g className={`move-node-container`}
