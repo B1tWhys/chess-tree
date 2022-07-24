@@ -10,7 +10,6 @@ class ArchiveUrls {
 export default class ChessComGameHistoryImpl implements ChessComGameHistoryService {
     private static instance: ChessComGameHistoryImpl;
     private static requestMutex = new Mutex();
-    private static gameArchiveCache = {};
 
     public static getInstance() {
         if (!ChessComGameHistoryImpl.instance) {
@@ -20,22 +19,30 @@ export default class ChessComGameHistoryImpl implements ChessComGameHistoryServi
         return ChessComGameHistoryImpl.instance;
     }
 
+    private static async throttledJsonRequest<T>(url: string): Promise<T> {
+        return await ChessComGameHistoryImpl.requestMutex.runExclusive(async () =>
+            await (await fetch(url)).json());
+    }
+
     async getLastGamePgn(username: string): Promise<string> {
         const archiveUrls = await ChessComGameHistoryImpl.getArchiveUrls(username);
         const lastArchiveUrl = archiveUrls.archives[0];
-        const archiveResp = await (await fetch(lastArchiveUrl)).json();
+        const archiveResp = await ChessComGameHistoryImpl.throttledJsonRequest(lastArchiveUrl);
         const games = archiveResp['games'];
         return games[games.length - 1]["pgn"];
     }
 
+    async getAllGamePgns(username: string): Promise<Array<string>> {
+        const archiveUrls = await ChessComGameHistoryImpl.getArchiveUrls(username);
+        const archiveResponses: Object[] = await Promise.all(archiveUrls.archives
+            .map(url => ChessComGameHistoryImpl.throttledJsonRequest<Object>(url)));
+        return archiveResponses
+            .filter(r => "pgn" in r)
+            .map(r => r["pgn"]);
+    }
+
     private static async getArchiveUrls(username: string): Promise<ArchiveUrls> {
         const url = `https://api.chess.com/pub/player/${username}/games/archives`;
-        if (username in this.gameArchiveCache) return this.gameArchiveCache[username];
-        const result = await this.requestMutex.runExclusive(async () => {
-            const resp = await fetch(url);
-            return await resp.json();
-        });
-        this.gameArchiveCache[username] = result;
-        return result;
+        return this.throttledJsonRequest<ArchiveUrls>(url);
     }
 }

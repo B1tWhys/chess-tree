@@ -3,6 +3,7 @@ import PgnTree from "./components/PgnTree";
 import {Component} from "react";
 import {MoveNode} from "./types/MoveNode.ts";
 import ChessComGameHistoryImpl from "./services/ChessComGameHistoryImpl.ts";
+import GameTree from "./types/GameTree.ts";
 
 class App extends Component {
     constructor(props) {
@@ -11,10 +12,12 @@ class App extends Component {
         this.state = {pgn: "1. d4 d5 2. e3 (2. f4 g5 3. fxg5 f6 4. gxf6 exf6) 2... e6 3. f4 *"};
         this.handleChange = this.handleChange.bind(this);
 
-        // FIXME: stupid pattern.
-        ChessComGameHistoryImpl.getInstance().getLastGamePgn("chmod111").then((pgn) => {
-            this.setState({"pgn": pgn});
-        });
+        // FIXME: bad pattern. Should prob use some sort of DI
+        ChessComGameHistoryImpl.getInstance().getAllGamePgns("chmod111").then((PGNs) => {
+            const gameTrees = PGNs.map(GameTree.fromPgnStr);
+            const combinedTree = GameTree.merge(...gameTrees);
+            return combinedTree.toPgn();
+        })
     }
 
     handleChange(event) {

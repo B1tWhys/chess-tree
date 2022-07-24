@@ -24,7 +24,7 @@ class PgnTree extends Component {
         this.setState({
             translate: {
                 x: boundingRect.width / 2,
-                y: 25
+                y: 40
             },
             dimensions: {
                 height: boundingRect.height,
