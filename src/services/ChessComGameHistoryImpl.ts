@@ -1,4 +1,5 @@
-import {ChessComGameHistoryService} from "./definitions/ChessComGameHistory";
+import {ChessComGameHistoryService} from "./definitions/GameHistoryProxy";
+import {Mutex} from "async-mutex";
 
 // API Docs: https://www.chess.com/news/view/published-data-api
 
@@ -8,9 +9,8 @@ class ArchiveUrls {
 
 export default class ChessComGameHistoryImpl implements ChessComGameHistoryService {
     private static instance: ChessComGameHistoryImpl;
-
-    private constructor() {
-    }
+    private static requestMutex = new Mutex();
+    private static gameArchiveCache = {};
 
     public static getInstance() {
         if (!ChessComGameHistoryImpl.instance) {
@@ -30,7 +30,12 @@ export default class ChessComGameHistoryImpl implements ChessComGameHistoryServi
 
     private static async getArchiveUrls(username: string): Promise<ArchiveUrls> {
         const url = `https://api.chess.com/pub/player/${username}/games/archives`;
-        const resp = await fetch(url);
-        return await resp.json();
+        if (username in this.gameArchiveCache) return this.gameArchiveCache[username];
+        const result = await this.requestMutex.runExclusive(async () => {
+            const resp = await fetch(url);
+            return await resp.json();
+        });
+        this.gameArchiveCache[username] = result;
+        return result;
     }
 }
