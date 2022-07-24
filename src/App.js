@@ -16,8 +16,9 @@ class App extends Component {
         ChessComGameHistoryImpl.getInstance().getAllGamePgns("chmod111").then((PGNs) => {
             const gameTrees = PGNs.map(GameTree.fromPgnStr);
             const combinedTree = GameTree.merge(...gameTrees);
-            return combinedTree.toPgn();
-        })
+            combinedTree.truncate(8); // FIXME: make configurable
+            this.setState({pgn: combinedTree.toPgn()});
+        });
     }
 
     handleChange(event) {

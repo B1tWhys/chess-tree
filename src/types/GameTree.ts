@@ -30,4 +30,8 @@ export default class GameTree {
             moves: movesNode
         }).trim()
     }
+
+    truncate(depth: number) {
+        this.firstMoves.forEach(f => f.truncate(depth));
+    }
 }

@@ -1,10 +1,14 @@
 import {MoveNode} from './MoveNode';
 import GameTree from "./GameTree";
 
+function moveNodeFromPgn(pgn: string): MoveNode {
+    let tree = GameTree.fromPgnStr(pgn);
+    return tree.firstMoves.length ? tree.firstMoves[0] : null;
+}
 
-describe("When creating a MoveNode from PGN", function () {
-    test("An empty game should result in null", () => {
-        let result = MoveNode.fromPgn("[Event \"?\"]\n" +
+describe("When creating a game tree from PGN", function () {
+    test("An empty game should result in empty tree", () => {
+        let result = moveNodeFromPgn("[Event \"?\"]\n" +
             "[Site \"?\"]\n" +
             "[Date \"????.??.??\"]\n" +
             "[Round \"?\"]\n" +
@@ -17,21 +21,21 @@ describe("When creating a MoveNode from PGN", function () {
     });
 
     test("A 1 ply game should return a root node with no children", () => {
-        let result = MoveNode.fromPgn( "1. d3 *");
+        let result = moveNodeFromPgn( "1. d3 *");
 
         expect(result).toBeTruthy();
         expect(result).toMatchObject(new MoveNode("d3", true, []));
     });
 
     test("A linear 2 ply game returns a root & single child", () => {
-        let result = MoveNode.fromPgn("1. d3 d6 *");
+        let result = moveNodeFromPgn("1. d3 d6 *");
         expect(result).toMatchObject(new MoveNode("d3", true, [
             new MoveNode("d6", false, [])
         ]));
     });
 
     test("A linear 3 ply game returns a root with a child with a child", () => {
-        let result = MoveNode.fromPgn("1. d3 d6 2. e4 *");
+        let result = moveNodeFromPgn("1. d3 d6 2. e4 *");
         expect(result).toMatchObject(new MoveNode("d3", true, [
             new MoveNode("d6", false, [
                 new MoveNode("e4", true, [])
@@ -40,7 +44,7 @@ describe("When creating a MoveNode from PGN", function () {
     });
 
     test("A game with 2 variations of ply 2 is handled properly", () => {
-        let result = MoveNode.fromPgn("1. d3 d6 (1... e6) *");
+        let result = moveNodeFromPgn("1. d3 d6 (1... e6) *");
         expect(result).toMatchObject(new MoveNode("d3", true, [
             new MoveNode("d6", false, []),
             new MoveNode("e6", false, [])
@@ -48,7 +52,7 @@ describe("When creating a MoveNode from PGN", function () {
     });
 
     test("A game with 3 variations of ply 2 is handled properly", () => {
-        let result = MoveNode.fromPgn("1. d3 d6 (1... e6) (1... f6) *");
+        let result = moveNodeFromPgn("1. d3 d6 (1... e6) (1... f6) *");
 
         expect(result).toMatchObject(new MoveNode("d3", true, [
             new MoveNode("d6", false, []),
@@ -58,7 +62,7 @@ describe("When creating a MoveNode from PGN", function () {
     });
 
     test("A tree with 2 variations at ply 3 are handled properly", () => {
-        let result = MoveNode.fromPgn("1. d3 d6 2. e3 (2. e4) *");
+        let result = moveNodeFromPgn("1. d3 d6 2. e3 (2. e4) *");
         expect(result).toMatchObject(new MoveNode("d3", true, [
             new MoveNode("d6", false, [
                 new MoveNode("e3", true, []),
@@ -68,7 +72,7 @@ describe("When creating a MoveNode from PGN", function () {
     });
 
     test("A multi-ply variation is handled properly", () => {
-        let result = MoveNode.fromPgn("1. d3 d6 (1... e6 2. e4 f6) *");
+        let result = moveNodeFromPgn("1. d3 d6 (1... e6 2. e4 f6) *");
         expect(result).toMatchObject(new MoveNode("d3", true, [
             new MoveNode("d6", false, []),
             new MoveNode("e6", false, [
@@ -80,7 +84,7 @@ describe("When creating a MoveNode from PGN", function () {
     });
 
     test("Singly nested variations of ply 2 are handled properly", () => {
-        let result = MoveNode.fromPgn("1. d3 d6 (1... e6 2. e4 f6 (2... f5 3. exf5) 3. g3) *");
+        let result = moveNodeFromPgn("1. d3 d6 (1... e6 2. e4 f6 (2... f5 3. exf5) 3. g3) *");
         expect(result).toMatchObject(new MoveNode("d3", true, [
             new MoveNode("d6", false, []),
             new MoveNode("e6", false, [
@@ -97,7 +101,7 @@ describe("When creating a MoveNode from PGN", function () {
     });
 
     test("Singly nested variations of ply 3 are handled properly", () => {
-        let result = MoveNode.fromPgn("1. d3 d6 2. e4 (2. e3 f6 (2... f5) 3. f4) *");
+        let result = moveNodeFromPgn("1. d3 d6 2. e4 (2. e3 f6 (2... f5) 3. f4) *");
         expect(result).toMatchObject(new MoveNode("d3", true, [
             new MoveNode("d6", false, [
                 new MoveNode("e4", true, []),

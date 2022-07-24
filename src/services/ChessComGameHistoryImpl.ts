@@ -25,24 +25,34 @@ export default class ChessComGameHistoryImpl implements ChessComGameHistoryServi
     }
 
     async getLastGamePgn(username: string): Promise<string> {
-        const archiveUrls = await ChessComGameHistoryImpl.getArchiveUrls(username);
-        const lastArchiveUrl = archiveUrls.archives[0];
+        const archiveUrls = (await ChessComGameHistoryImpl.getArchiveUrls(username));
+        const lastArchiveUrl = archiveUrls[0];
         const archiveResp = await ChessComGameHistoryImpl.throttledJsonRequest(lastArchiveUrl);
         const games = archiveResp['games'];
         return games[games.length - 1]["pgn"];
     }
 
     async getAllGamePgns(username: string): Promise<Array<string>> {
+        class ResponseGame {
+            pgn?: string;
+        }
+
+        class ArchiveResponse {
+            games: Array<ResponseGame>;
+        }
+
         const archiveUrls = await ChessComGameHistoryImpl.getArchiveUrls(username);
-        const archiveResponses: Object[] = await Promise.all(archiveUrls.archives
-            .map(url => ChessComGameHistoryImpl.throttledJsonRequest<Object>(url)));
+        const archiveResponses: Array<ArchiveResponse> = await Promise.all(archiveUrls.slice(archiveUrls.length - 3) // FIXME: make this configurable
+            .map(url => ChessComGameHistoryImpl.throttledJsonRequest<ArchiveResponse>(url)));
+
         return archiveResponses
-            .filter(r => "pgn" in r)
-            .map(r => r["pgn"]);
+            .flatMap(r => r.games)
+            .map(g => g.pgn);
     }
 
-    private static async getArchiveUrls(username: string): Promise<ArchiveUrls> {
+    private static async getArchiveUrls(username: string): Promise<string[]> {
         const url = `https://api.chess.com/pub/player/${username}/games/archives`;
-        return this.throttledJsonRequest<ArchiveUrls>(url);
+        const resp = await this.throttledJsonRequest<ArchiveUrls>(url);
+        return resp.archives;
     }
 }

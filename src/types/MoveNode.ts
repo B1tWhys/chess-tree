@@ -51,4 +51,12 @@ export class MoveNode {
         childNode.children = this.children.map(m => m.toChessopsNode());
         return childNode;
     }
+
+    truncate(depth: number) {
+        if (depth > 0) {
+            this.children.forEach(m => m.truncate(depth-1));
+        } else {
+            this.children = [];
+        }
+    }
 }
