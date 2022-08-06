@@ -22,13 +22,6 @@ export class MoveNode {
         this.fen = fen;
     }
 
-    static fromPgn(pgnStr) {
-        let games: Game<PgnNodeData>[] = parsePgn(pgnStr);
-        if (!games[0].moves.children.length) return null;
-        let firstMoveNode = games[0].moves.children[0];
-        return this.fromChessopsNode(firstMoveNode, true);
-    }
-
     static fromChessopsNode(chessOpsNode: ChildNode<PgnNodeData>, parentMoveNode: MoveNode | null) {
         let isWhiteTurn: boolean;
         let prevFen: string;

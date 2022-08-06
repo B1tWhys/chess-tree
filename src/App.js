@@ -26,6 +26,7 @@ class App extends Component {
     }
 
     render() {
+        const tree = GameTree.fromPgnStr(this.state.pgn);
         return (<>
             <div className="app-container">
                 <div style={{display: "flex", flexDirection: "column"}}>
@@ -41,7 +42,7 @@ class App extends Component {
                               width: '30vw'
                           }}/>
                 </div>
-                <PgnTree rootNode={MoveNode.fromPgn(this.state.pgn)}/>
+                <PgnTree rootNode={tree.firstMoves[0]}/>
             </div>
         </>);
     }

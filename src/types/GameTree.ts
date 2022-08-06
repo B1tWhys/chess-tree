@@ -13,7 +13,7 @@ export default class GameTree {
 
         let games: Game<PgnNodeData>[] = parsePgn(pgnStr);
         let firstMoves = games.flatMap((game) =>
-            game.moves.children.map((m) => MoveNode.fromChessopsNode(m)))
+            game.moves.children.map((m) => MoveNode.fromChessopsNode(m, null)))
         return new GameTree(firstMoves);
     }
 
