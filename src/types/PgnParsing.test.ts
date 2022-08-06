@@ -205,9 +205,39 @@ describe("When merging game trees", function () {
 });
 
 describe('When converting a move node to FEN', function () {
-    test("FEN for first moveNode includes that move", () => {
-        const pgnStr = "1. d3 *";
-        const moveNode = GameTree.fromPgnStr(pgnStr).firstMoves[0];
-        expect(moveNode.fen).toEqual("rnbqkbnr/pppppppp/8/8/8/3P4/PPP1PPPP/RNBQKBNR b KQkq - 0 1");
+    test("FEN is calculated correctly for linear series of moves", () => {
+        const pgnStr = "1. a4 h5 2. a5 b5 3. axb6 cxb6 4. Nc3 b5 5. Nxb5";
+        let moveNode = GameTree.fromPgnStr(pgnStr).firstMoves[0];
+
+        expect(moveNode.fen).toEqual("rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq - 0 1");
+        moveNode = moveNode.children[0];
+        expect(moveNode.fen).toEqual("rnbqkbnr/ppppppp1/8/7p/P7/8/1PPPPPPP/RNBQKBNR w KQkq - 0 2");
+        moveNode = moveNode.children[0];
+        expect(moveNode.fen).toEqual("rnbqkbnr/ppppppp1/8/P6p/8/8/1PPPPPPP/RNBQKBNR b KQkq - 0 2");
+        moveNode = moveNode.children[0];
+        expect(moveNode.fen).toEqual("rnbqkbnr/p1ppppp1/8/Pp5p/8/8/1PPPPPPP/RNBQKBNR w KQkq b6 0 3");
+        moveNode = moveNode.children[0];
+        expect(moveNode.fen).toEqual("rnbqkbnr/p1ppppp1/1P6/7p/8/8/1PPPPPPP/RNBQKBNR b KQkq - 0 3");
+        moveNode = moveNode.children[0];
+        expect(moveNode.fen).toEqual("rnbqkbnr/p2pppp1/1p6/7p/8/8/1PPPPPPP/RNBQKBNR w KQkq - 0 4");
+        moveNode = moveNode.children[0];
+        expect(moveNode.fen).toEqual("rnbqkbnr/p2pppp1/1p6/7p/8/2N5/1PPPPPPP/R1BQKBNR b KQkq - 1 4");
+        moveNode = moveNode.children[0];
+        expect(moveNode.fen).toEqual("rnbqkbnr/p2pppp1/8/1p5p/8/2N5/1PPPPPPP/R1BQKBNR w KQkq - 0 5");
+        moveNode = moveNode.children[0];
+        expect(moveNode.fen).toEqual("rnbqkbnr/p2pppp1/8/1N5p/8/8/1PPPPPPP/R1BQKBNR b KQkq - 0 5");
     });
+
+    test("FEN is calculated properly multiple first moves", () => {
+        let gameTree = GameTree.fromPgnStr("1. a3 (1. b3) 1... a6 *");
+        expect(gameTree.firstMoves.length).toEqual(2);
+
+        let a3 = gameTree.firstMoves[0];
+        expect(a3.fen).toEqual("rnbqkbnr/pppppppp/8/8/8/P7/1PPPPPPP/RNBQKBNR b KQkq - 0 1");
+        let b3 = gameTree.firstMoves[1];
+        expect(b3.fen).toEqual("rnbqkbnr/pppppppp/8/8/8/1P6/P1PPPPPP/RNBQKBNR b KQkq - 0 1");
+
+        let a6 = a3.children[0];
+        expect(a6.fen).toEqual("rnbqkbnr/1ppppppp/p7/8/8/P7/1PPPPPPP/RNBQKBNR w KQkq - 0 2");
+    })
 });

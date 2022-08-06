@@ -1,17 +1,25 @@
 import {ChildNode, Game, parsePgn, PgnNodeData} from "chessops/pgn";
+import {INITIAL_EPD, makeFen, parseFen} from "chessops/fen";
+import {Chess} from "chessops/chess";
+import {parseSan} from "chessops/san";
 
 export class MoveNode {
     name: string;
     children: Array<MoveNode>;
     isWhiteTurn: boolean;
-    fen: string;
+    parentNode?: MoveNode;
+    fen?: string;
 
     constructor(name: string,
                 isWhiteTurn: boolean,
-                children: Array<MoveNode>) {
+                children?: Array<MoveNode>,
+                parentNode?: MoveNode,
+                fen?: string) {
         this.name = name;
         this.children = children || [];
         this.isWhiteTurn = isWhiteTurn;
+        this.parentNode = parentNode;
+        this.fen = fen;
     }
 
     static fromPgn(pgnStr) {
@@ -21,14 +29,34 @@ export class MoveNode {
         return this.fromChessopsNode(firstMoveNode, true);
     }
 
-    static fromChessopsNode(node: ChildNode<PgnNodeData>, isWhiteTurn: boolean = true) {
-        let children = node.children.map((n) =>
-            this.fromChessopsNode(n, !isWhiteTurn));
-        return new MoveNode(
-            node.data.san,
+    static fromChessopsNode(chessOpsNode: ChildNode<PgnNodeData>, parentMoveNode: MoveNode | null) {
+        let isWhiteTurn: boolean;
+        let prevFen: string;
+        if (parentMoveNode) {
+            isWhiteTurn = !parentMoveNode.isWhiteTurn
+            prevFen = parentMoveNode.fen;
+        } else {
+            isWhiteTurn = true;
+            prevFen = INITIAL_EPD;
+        }
+        const nextFen = this.calcNextFen(prevFen, chessOpsNode);
+        const newNode = new MoveNode(
+            chessOpsNode.data.san,
             isWhiteTurn,
-            children
+            undefined,
+            parentMoveNode,
+            nextFen
         );
+        newNode.children = chessOpsNode.children.map((n) =>
+            this.fromChessopsNode(n, newNode))
+        return newNode;
+    }
+
+    private static calcNextFen(prevFen: string, chessOpsNode: ChildNode<PgnNodeData>) {
+        const chessPos = Chess.fromSetup(parseFen(prevFen).unwrap()).unwrap();
+        const move = parseSan(chessPos, chessOpsNode.data.san);
+        chessPos.play(move);
+        return makeFen(chessPos.toSetup());
     }
 
     static merge(...moves: MoveNode[]): MoveNode[] {
