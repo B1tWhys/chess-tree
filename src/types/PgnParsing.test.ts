@@ -6,6 +6,14 @@ function moveNodeFromPgn(pgn: string): MoveNode {
     return tree.firstMoves.length ? tree.firstMoves[0] : null;
 }
 
+function minimalMoveObject(name: string, isWhiteTurn: boolean, children: Array<Object>) {
+    return {
+        name: name,
+        isWhiteTurn: isWhiteTurn,
+        children: children
+    };
+}
+
 describe("When creating a game tree from PGN", function () {
     test("An empty game should result in empty tree", () => {
         let result = moveNodeFromPgn("[Event \"?\"]\n" +
@@ -24,60 +32,77 @@ describe("When creating a game tree from PGN", function () {
         let result = moveNodeFromPgn( "1. d3 *");
 
         expect(result).toBeTruthy();
-        expect(result).toMatchObject(new MoveNode("d3", true, []));
+        expect(result).toMatchObject(minimalMoveObject("d3", true, []));
     });
 
     test("A linear 2 ply game returns a root & single child", () => {
         let result = moveNodeFromPgn("1. d3 d6 *");
-        expect(result).toMatchObject(new MoveNode("d3", true, [
-            new MoveNode("d6", false, [])
-        ]));
+        expect(result).toMatchObject({
+            name: "d3",
+            isWhiteTurn: true,
+            children: [{name: "d6", isWhiteTurn: false, children: []}]
+        });
+
+        expect(result).toMatchObject(
+            minimalMoveObject("d3", true,
+                [minimalMoveObject("d6", false, [])
+                ]
+            )
+        )
     });
 
     test("A linear 3 ply game returns a root with a child with a child", () => {
         let result = moveNodeFromPgn("1. d3 d6 2. e4 *");
-        expect(result).toMatchObject(new MoveNode("d3", true, [
-            new MoveNode("d6", false, [
-                new MoveNode("e4", true, [])
+
+
+        expect(result).toMatchObject(
+            minimalMoveObject("d3", true, [
+                minimalMoveObject("d6", false, [
+                    minimalMoveObject("e4", true, [])
+                ])
             ])
-        ]));
+        );
     });
 
     test("A game with 2 variations of ply 2 is handled properly", () => {
         let result = moveNodeFromPgn("1. d3 d6 (1... e6) *");
-        expect(result).toMatchObject(new MoveNode("d3", true, [
-            new MoveNode("d6", false, []),
-            new MoveNode("e6", false, [])
-        ]))
+        expect(result).toMatchObject(
+            minimalMoveObject("d3", true, [
+                minimalMoveObject("d6", false, []),
+                minimalMoveObject("e6", false, [])
+            ])
+        )
     });
 
     test("A game with 3 variations of ply 2 is handled properly", () => {
         let result = moveNodeFromPgn("1. d3 d6 (1... e6) (1... f6) *");
 
-        expect(result).toMatchObject(new MoveNode("d3", true, [
-            new MoveNode("d6", false, []),
-            new MoveNode("e6", false, []),
-            new MoveNode("f6", false, [])
-        ]))
+        expect(result).toMatchObject(
+            minimalMoveObject("d3", true, [
+                minimalMoveObject("d6", false, []),
+                minimalMoveObject("e6", false, []),
+                minimalMoveObject("f6", false, [])
+            ])
+        )
     });
 
     test("A tree with 2 variations at ply 3 are handled properly", () => {
         let result = moveNodeFromPgn("1. d3 d6 2. e3 (2. e4) *");
-        expect(result).toMatchObject(new MoveNode("d3", true, [
-            new MoveNode("d6", false, [
-                new MoveNode("e3", true, []),
-                new MoveNode("e4", true, [])
+        expect(result).toMatchObject(minimalMoveObject("d3", true, [
+            minimalMoveObject("d6", false, [
+                minimalMoveObject("e3", true, []),
+                minimalMoveObject("e4", true, [])
             ])
         ]))
     });
 
     test("A multi-ply variation is handled properly", () => {
         let result = moveNodeFromPgn("1. d3 d6 (1... e6 2. e4 f6) *");
-        expect(result).toMatchObject(new MoveNode("d3", true, [
-            new MoveNode("d6", false, []),
-            new MoveNode("e6", false, [
-                new MoveNode("e4", true, [
-                    new MoveNode("f6", false, [])
+        expect(result).toMatchObject(minimalMoveObject("d3", true, [
+            minimalMoveObject("d6", false, []),
+            minimalMoveObject("e6", false, [
+                minimalMoveObject("e4", true, [
+                    minimalMoveObject("f6", false, [])
                 ])
             ])
         ]));
@@ -85,15 +110,15 @@ describe("When creating a game tree from PGN", function () {
 
     test("Singly nested variations of ply 2 are handled properly", () => {
         let result = moveNodeFromPgn("1. d3 d6 (1... e6 2. e4 f6 (2... f5 3. exf5) 3. g3) *");
-        expect(result).toMatchObject(new MoveNode("d3", true, [
-            new MoveNode("d6", false, []),
-            new MoveNode("e6", false, [
-                new MoveNode("e4", true, [
-                    new MoveNode("f6", false, [
-                        new MoveNode("g3", true, []),
+        expect(result).toMatchObject(minimalMoveObject("d3", true, [
+            minimalMoveObject("d6", false, []),
+            minimalMoveObject("e6", false, [
+                minimalMoveObject("e4", true, [
+                    minimalMoveObject("f6", false, [
+                        minimalMoveObject("g3", true, []),
                     ]),
-                    new MoveNode("f5", false, [
-                        new MoveNode("exf5", true, [])
+                    minimalMoveObject("f5", false, [
+                        minimalMoveObject("exf5", true, [])
                     ])
                 ])
             ])
@@ -102,14 +127,14 @@ describe("When creating a game tree from PGN", function () {
 
     test("Singly nested variations of ply 3 are handled properly", () => {
         let result = moveNodeFromPgn("1. d3 d6 2. e4 (2. e3 f6 (2... f5) 3. f4) *");
-        expect(result).toMatchObject(new MoveNode("d3", true, [
-            new MoveNode("d6", false, [
-                new MoveNode("e4", true, []),
-                new MoveNode("e3", true, [
-                    new MoveNode("f6", false, [
-                        new MoveNode("f4", true, [])
+        expect(result).toMatchObject(minimalMoveObject("d3", true, [
+            minimalMoveObject("d6", false, [
+                minimalMoveObject("e4", true, []),
+                minimalMoveObject("e3", true, [
+                    minimalMoveObject("f6", false, [
+                        minimalMoveObject("f4", true, [])
                     ]),
-                    new MoveNode("f5", false, [])
+                    minimalMoveObject("f5", false, [])
                 ])
             ])
         ]))
@@ -177,4 +202,12 @@ describe("When merging game trees", function () {
 
         compareIgnoringWhitespace(merged.toPgn(), expected);
     })
-})
+});
+
+describe('When converting a move node to FEN', function () {
+    test("FEN for first moveNode includes that move", () => {
+        const pgnStr = "1. d3 *";
+        const moveNode = GameTree.fromPgnStr(pgnStr).firstMoves[0];
+        expect(moveNode.fen).toEqual("rnbqkbnr/pppppppp/8/8/8/3P4/PPP1PPPP/RNBQKBNR b KQkq - 0 1");
+    });
+});
