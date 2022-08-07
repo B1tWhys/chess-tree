@@ -1,7 +1,7 @@
 import './App.css';
 import ChessTreeComponent from "./components/ChessTreeComponent";
 import {Component} from "react";
-import ChessComGameHistoryImpl from "./services/ChessComGameHistoryImpl.ts";
+import ChessComStudyProviderImpl from "./services/ChessComStudyProviderImpl.ts";
 import GameTree from "./types/GameTree.ts";
 
 class App extends Component {
@@ -12,7 +12,7 @@ class App extends Component {
         this.handleChange = this.handleChange.bind(this);
 
         // FIXME: bad pattern. Should prob use some sort of DI
-        ChessComGameHistoryImpl.getInstance().getAllGamePgns("chmod111").then((PGNs) => {
+        ChessComStudyProviderImpl.getInstance().getAllGamePgns("chmod111").then((PGNs) => {
             const gameTrees = PGNs.map(GameTree.fromPgnStr);
             const combinedTree = GameTree.merge(...gameTrees);
             combinedTree.truncate(8); // FIXME: make configurable
