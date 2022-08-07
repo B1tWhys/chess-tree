@@ -1,4 +1,4 @@
-import {ChildNode, Game, parsePgn, PgnNodeData} from "chessops/pgn";
+import {ChildNode, PgnNodeData} from "chessops/pgn";
 import {INITIAL_EPD, makeFen, parseFen} from "chessops/fen";
 import {Chess} from "chessops/chess";
 import {parseSan} from "chessops/san";
