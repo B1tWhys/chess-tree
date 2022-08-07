@@ -1,5 +1,5 @@
 import './App.css';
-import PgnTree from "./components/PgnTree";
+import ChessTreeComponent from "./components/ChessTreeComponent";
 import {Component} from "react";
 import ChessComGameHistoryImpl from "./services/ChessComGameHistoryImpl.ts";
 import GameTree from "./types/GameTree.ts";
@@ -41,7 +41,7 @@ class App extends Component {
                               width: '30vw'
                           }}/>
                 </div>
-                <PgnTree rootNode={tree.firstMoves[0]}/>
+                <ChessTreeComponent rootNode={tree.firstMoves[0]}/>
             </div>
         </>);
     }

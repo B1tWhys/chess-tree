@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import TreeNode from "./TreeNode";
 import clone from 'clone';
 
-class PgnTree extends Component {
+class ChessTreeComponent extends Component {
     constructor(props) {
         super(props);
         this.treeRef = React.createRef();
@@ -80,9 +80,9 @@ class PgnTree extends Component {
     }
 }
 
-PgnTree.propTypes = {
+ChessTreeComponent.propTypes = {
     pgn: PropTypes.string,
     rootNode: PropTypes.objectOf(MoveNode)
 };
 
-export default PgnTree;
+export default ChessTreeComponent;
