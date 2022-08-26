@@ -1,10 +1,37 @@
+:root {
+    --background-color: #312E2B;
+    --menu-color: #272522;
+    --dark-move-color: #769656;
+    --light-move-color: #EEEED2;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-.app-container {
+#app-container {
     display: flex;
     flex-direction: row;
+    height: 100%;
+}
+
+.analysis-selector {
+    background-color: var(--menu-color);
+    width: 30%;
+}
+
+.analysis-tree-container {
+    background-color: var(--background-color);
+    width: 70%;
+}
+
+.chess-board {
+    position: fixed;
+    background:  url(../assets/board.png) no-repeat center/contain;
+    height: 25em;
+    aspect-ratio: 1;
+    right: 0;
+    z-index: 10;
 }
