@@ -1,5 +1,5 @@
 import {Component} from "react";
-import {Box, createTheme, CssBaseline, Drawer, List, ListItem, ThemeProvider} from "@mui/material";
+import {Box, createTheme, CssBaseline, Drawer, List, ListItem, Stack, ThemeProvider} from "@mui/material";
 import boardPlaceholder from "../assets/BoardPlaceholder.png";
 import chessTreePlaceholder from "../assets/ChessTreePlaceholder.png";
 
@@ -53,22 +53,33 @@ const analysisNames = [
 ]
 
 
-function AnalysisSelector() {
+function PgnSelector() {
     const drawerWidth = 300;
     return <Drawer anchor="left"
                    variant="permanent"
                    open={true}
-                   sx={{width: drawerWidth, flexGrow: 0}}
-                   PaperProps={{sx: {width: drawerWidth}}}>
-        <List>
-            {
-                analysisNames.map((an, idx) => (
-                    <ListItem divider={true} dense={true} selected={idx === 3}>
-                        {an}
-                    </ListItem>
-                ))
-            }
-        </List>
+                   sx={{width: drawerWidth, flexGrow: 0, height: "100vh"}}
+                   PaperProps={{sx: {width: drawerWidth, height: "100%"}}}>
+        <Stack height={"100%"}>
+            <List disablePadding={true} sx={{
+                maxHeight: "350px",
+                flex: "0 2 50%",
+                overflow: "auto"
+            }}>
+                {
+                    analysisNames.map((an, idx) => (
+                        <ListItem divider={true} dense={true} selected={idx === 3}>
+                            {an}
+                        </ListItem>
+                    ))
+                }
+            </List>
+            <Box sx={{
+                width: "100%",
+                background: "red",
+                flex: "1 1 50%"
+            }}/>
+        </Stack>
     </Drawer>
 }
 
@@ -84,11 +95,9 @@ function ChessBoard() {
         position: "fixed",
         width: 300,
         height: 300,
-        // aspectRatio: 1,
         top: 0,
         right: 0,
         background: `center/contain no-repeat url(${boardPlaceholder})`
-        // background: "red"
     }}/>
 }
 
@@ -98,7 +107,7 @@ class App extends Component {
             <ThemeProvider theme={theme}>
                 <Box sx={{display: "flex", height: "100%"}}>
                     <CssBaseline/>
-                    <AnalysisSelector/>
+                    <PgnSelector/>
                     <AnalysisTree/>
                     <ChessBoard/>
                 </Box>
