@@ -1,8 +1,9 @@
-import {Component} from "react";
 import {Box, createTheme, CssBaseline, ThemeProvider} from "@mui/material";
 import boardPlaceholder from "../assets/BoardPlaceholder.png";
-import chessTreePlaceholder from "../assets/ChessTreePlaceholder.png";
 import {AnalysisControlPanel} from "./AnalysisControlPanel";
+import {AnalysisTree} from "./AnalysisTree";
+import {useMemo, useState} from "react";
+import GameTree from "../types/GameTree";
 
 const theme = createTheme({
     palette: {
@@ -17,13 +18,6 @@ const theme = createTheme({
     }
 })
 
-function AnalysisTree() {
-    return <Box sx={{
-        flexGrow: 1,
-        background: `center/contain no-repeat url(${chessTreePlaceholder})`
-    }}/>
-}
-
 function ChessBoard() {
     return <Box sx={{
         position: "fixed",
@@ -35,19 +29,20 @@ function ChessBoard() {
     }}/>
 }
 
-class App extends Component {
-    render() {
-        return (
-            <ThemeProvider theme={theme}>
-                <Box sx={{display: "flex", height: "100%"}}>
-                    <CssBaseline/>
-                    <AnalysisControlPanel/>
-                    <AnalysisTree/>
-                    <ChessBoard/>
-                </Box>
-            </ThemeProvider>
-        )
-    }
+function App() {
+    const [pgn, setPgn] = useState("1. a3 a6 2. b3 (2. b4 b6 (2... b5)) 2... b6 (2... b5)");
+
+    const tree = useMemo(() => GameTree.fromPgnStr(pgn), [pgn]);
+    return (
+        <ThemeProvider theme={theme}>
+            <Box sx={{display: "flex", height: "100%"}}>
+                <CssBaseline/>
+                <AnalysisControlPanel onPgnUpdate={pgn => setPgn(pgn)} pgn={pgn}/>
+                <AnalysisTree gameTree={tree}/>
+                <ChessBoard/>
+            </Box>
+        </ThemeProvider>
+    )
 }
 
 export default App;

@@ -36,8 +36,19 @@ const analysisNames = [
     "Hanham; Hayward"
 ]
 
-export function AnalysisControlPanel() {
+interface Props {
+    onPgnUpdate: (pgn: string) => void
+    pgn: string
+}
+
+export function AnalysisControlPanel({onPgnUpdate, pgn}: Props) {
     const drawerWidth = 300;
+
+    const onChange = (event) => {
+        event.preventDefault()
+        onPgnUpdate(event.target.value)
+    }
+
     return <Drawer anchor="left"
                    variant="permanent"
                    open={true}
@@ -50,13 +61,13 @@ export function AnalysisControlPanel() {
             }}>
                 {
                     analysisNames.map((an, idx) => (
-                        <ListItem divider={true} dense={true} selected={idx === 3}>
+                        <ListItem divider={true} dense={true} selected={idx === 3} key={idx}>
                             {an}
                         </ListItem>
                     ))
                 }
             </List>
-            <TextareaAutosize minRows={10} maxRows={80} placeholder={"PGN"} style={{resize: "none"}}/>
+            <TextareaAutosize minRows={10} maxRows={80} placeholder={"PGN"} onChange={onChange} value={pgn} style={{resize: "none"}}/>
         </Stack>
     </Drawer>
 }
