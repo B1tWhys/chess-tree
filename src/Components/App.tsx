@@ -4,19 +4,8 @@ import {AnalysisControlPanel} from "./AnalysisControlPanel";
 import {AnalysisTree} from "./AnalysisTree";
 import {useMemo, useState} from "react";
 import GameTree from "../types/GameTree";
+import {theme} from "./Theme";
 
-const theme = createTheme({
-    palette: {
-        mode: "dark",
-        primary: {
-            main: "#EEEED2",
-            dark: "#312E2B"
-        },
-        secondary: {
-            main: "#312E2B"
-        }
-    }
-})
 
 function ChessBoard() {
     return <Box sx={{

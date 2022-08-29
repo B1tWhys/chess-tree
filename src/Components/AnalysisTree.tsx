@@ -1,12 +1,14 @@
-import {Box} from "@mui/material";
+import {Box, useTheme} from "@mui/material";
 import {useEffect, useRef, useState} from "react";
 import chessTreePlaceholder from "../assets/ChessTreePlaceholder.png";
 import GameTree from "../types/GameTree";
 import {select, hierarchy, tree, linkVertical} from "d3";
+import {MoveNode} from "../types/MoveNode";
 
 interface Props {
     gameTree: GameTree
 }
+
 export function AnalysisTree({gameTree}: Props) {
     const containerRef = useRef()
     const [width, setWidth] = useState(0);
@@ -30,6 +32,7 @@ export function AnalysisTree({gameTree}: Props) {
     }, []);
 
     const svgRef = useRef()
+    const theme = useTheme();
 
     useEffect(() => {
         const svgElement = select(svgRef.current)
@@ -58,8 +61,10 @@ export function AnalysisTree({gameTree}: Props) {
                 .attr('r', 30)
                 .attr('cx', d => d.x)
                 .attr('cy', d => d.y)
-                .attr('fill', '#fff')
-    }, [gameTree, width, height])
+                .attr('fill', d => d.data.isWhiteTurn ? theme.squares.light : theme.squares.dark)
+                .attr('stroke', d => d.data.isWhiteTurn ? theme.squares.dark : theme.squares.light)
+                .attr('stroke-width', 3)
+    }, [gameTree, width, height, theme.squares])
 
     return <Box sx={{flexGrow: 1}} ref={containerRef}>
         <svg ref={svgRef} width={width} height={height}/>
