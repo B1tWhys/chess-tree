@@ -32,8 +32,7 @@ export function AnalysisTree({gameTree}: Props) {
         resizeObserver.observe(element)
 
         return () => resizeObserver.unobserve(element)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [width, height]);
 
     useEffect(() => {
         panzoom(treeRef.current)
@@ -49,35 +48,41 @@ export function AnalysisTree({gameTree}: Props) {
     }, [gameTree])
 
     function generateLinks() {
-        return nodeTree.links().map((n, i) => {
-            return <path key={i} d={genLinkPath(n)}
-                         fill={"none"}
-                         stroke={"gray"}
-                         strokeWidth={3}/>
-        });
+        return (<g key={"links"}>{
+            nodeTree.links().map((n, i) => {
+                return <path key={i} d={genLinkPath(n)}
+                      fill={"none"}
+                      stroke={"gray"}
+                      strokeWidth={3}/>
+            })
+        }
+        </g>);
     }
 
     function generateNodes() {
-        return nodeTree.descendants().map((n, i) => {
-            const isWhiteTurn = n.data.isWhiteTurn
-            return <g key={i} transform={`translate(${n.x}, ${n.y})`}>
-                <circle r={40}
-                        fill={isWhiteTurn ? theme.squares.light : theme.squares.dark}
-                        stroke={isWhiteTurn ? theme.squares.dark : theme.squares.light}
-                        strokeWidth={3}/>
-                <text textAnchor="middle"
-                      fontFamily={"Roboto Mono, monospace"}
-                      fontWeight={600}
-                      fontSize={35}
-                      fill={isWhiteTurn ? theme.squares.dark : theme.squares.light}
-                      dy=".35em">{n.data.name}</text>
-            </g>
-        });
+        return <g key={'nodes'}> {
+            nodeTree.descendants().map((n, i) => {
+                const isWhiteTurn = n.data.isWhiteTurn
+                return <g key={i} transform={`translate(${n.x}, ${n.y})`}>
+                    <circle r={40}
+                            fill={isWhiteTurn ? theme.squares.light : theme.squares.dark}
+                            stroke={isWhiteTurn ? theme.squares.dark : theme.squares.light}
+                            strokeWidth={3}/>
+                    <text textAnchor="middle"
+                          fontFamily={"Roboto Mono, monospace"}
+                          fontWeight={600}
+                          fontSize={35}
+                          fill={isWhiteTurn ? theme.squares.dark : theme.squares.light}
+                          dy=".35em">{n.data.name}</text>
+                </g>
+            })
+        }
+        </g>;
     }
 
     return <Box sx={{flexGrow: 1}} ref={containerRef}>
         <svg width={width} height={height} ref={treeRef}>
-            <g transform={`translate(${width / 2}, 50)`}>
+            <g transform={`translate(${width / 2}, 100)`}>
                 {generateLinks()}
                 {generateNodes()}
             </g>
