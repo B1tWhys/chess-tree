@@ -4,16 +4,18 @@ import GameTree from "../types/GameTree";
 import {hierarchy, linkVertical, tree} from "d3";
 import "@fontsource/roboto-mono/600.css"
 import panzoom from "panzoom";
+import {MoveNode} from "../types/MoveNode";
 
 interface Props {
     gameTree: GameTree
+    onMoveMouseover?: (MoveNode) => void
 }
 
 const genLinkPath = linkVertical()
     .x(d => d.x)
     .y(d => d.y);
 
-export function AnalysisTree({gameTree}: Props) {
+export function AnalysisTree({gameTree, onMoveMouseover}: Props) {
     const containerRef = useRef()
     const treeRef = useRef()
     const [width, setWidth] = useState(0);
@@ -59,12 +61,22 @@ export function AnalysisTree({gameTree}: Props) {
         </g>);
     }
 
+    function handleNodeMouseover(moveNode: MoveNode) {
+        if (onMoveMouseover) {
+            onMoveMouseover(moveNode)
+        }
+    }
+
     function generateNodes() {
         return <g key={'nodes'}> {
             nodeTree.descendants().map((n, i) => {
                 const isWhiteTurn = n.data.isWhiteTurn
                 return <g key={i} transform={`translate(${n.x}, ${n.y})`}>
                     <circle r={40}
+                            onMouseOver={(e) => {
+                                e.stopPropagation()
+                                handleNodeMouseover(n.data);
+                            }}
                             fill={isWhiteTurn ? theme.squares.light : theme.squares.dark}
                             stroke={isWhiteTurn ? theme.squares.dark : theme.squares.light}
                             strokeWidth={3}/>
@@ -82,7 +94,7 @@ export function AnalysisTree({gameTree}: Props) {
 
     return <Box sx={{flexGrow: 1}} ref={containerRef}>
         <svg width={width} height={height} ref={treeRef}>
-            <g transform={`translate(${width / 2}, 100)`}>
+            <g transform={`translate(${width / 3}, 100)`}>
                 {generateLinks()}
                 {generateNodes()}
             </g>
