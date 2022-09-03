@@ -5,6 +5,7 @@ import {hierarchy, linkVertical, tree} from "d3";
 import "@fontsource/roboto-mono/600.css"
 import panzoom from "panzoom";
 import {MoveNode} from "../types/MoveNode";
+import {MouseEvent} from "react";
 
 interface Props {
     gameTree: GameTree
@@ -20,6 +21,7 @@ export function AnalysisTree({gameTree, onMoveMouseover}: Props) {
     const treeRef = useRef()
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
+    const [selectedNode, setSelectedNode] = useState<MoveNode|null>(null)
 
     useEffect(() => {
         const element = containerRef.current;
@@ -61,7 +63,9 @@ export function AnalysisTree({gameTree, onMoveMouseover}: Props) {
         </g>);
     }
 
-    function handleNodeMouseover(moveNode: MoveNode) {
+    function handleNodeMouseover(mouseEvent: MouseEvent<SVGCircleElement>, moveNode: MoveNode) {
+        mouseEvent.stopPropagation()
+        setSelectedNode(moveNode)
         if (onMoveMouseover) {
             onMoveMouseover(moveNode)
         }
@@ -73,13 +77,10 @@ export function AnalysisTree({gameTree, onMoveMouseover}: Props) {
                 const isWhiteTurn = n.data.isWhiteTurn
                 return <g key={i} transform={`translate(${n.x}, ${n.y})`}>
                     <circle r={40}
-                            onMouseOver={(e) => {
-                                e.stopPropagation()
-                                handleNodeMouseover(n.data);
-                            }}
+                            onMouseOver={(e) => handleNodeMouseover(e, n.data)}
                             fill={isWhiteTurn ? theme.squares.light : theme.squares.dark}
                             stroke={isWhiteTurn ? theme.squares.dark : theme.squares.light}
-                            strokeWidth={3}/>
+                            strokeWidth={n.data === selectedNode ? 7 : 3}/>
                     <text textAnchor="middle"
                           fontFamily={"Roboto Mono, monospace"}
                           fontWeight={600}
