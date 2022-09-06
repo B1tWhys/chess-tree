@@ -4,16 +4,8 @@ import {AnalysisTree} from "./AnalysisTree";
 import {useMemo, useState} from "react";
 import GameTree from "../types/GameTree";
 import {theme} from "./Theme";
-import {Chessboard} from "react-chessboard";
+import {ChessBoard} from "./ChessBoard";
 
-
-function ChessBoard({fen}: {fen: string}) {
-    return <Chessboard boardWidth={300} customBoardStyle={{
-        position: "fixed",
-        top: 0,
-        right: 0
-    }} position={fen}/>
-}
 
 function App() {
     const [pgn, setPgn] = useState("1. a3 a6 2. b3 (2. b4 b6 (2... b5)) 2... b6 (2... b5)");
