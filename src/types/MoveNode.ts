@@ -52,6 +52,13 @@ export class MoveNode {
         return makeFen(chessPos.toSetup());
     }
 
+    private static calcNextFenFromSan(prevFen: string, san: string) {
+        const chessPos = Chess.fromSetup(parseFen(prevFen).unwrap()).unwrap();
+        const move = parseSan(chessPos, san);
+        chessPos.play(move);
+        return makeFen(chessPos.toSetup());
+    }
+
     static merge(...moves: MoveNode[]): MoveNode[] {
         let combinedMoves = new Map<string, MoveNode>();
         moves.forEach(m => {
@@ -79,5 +86,18 @@ export class MoveNode {
         } else {
             this.children = [];
         }
+    }
+
+    addChildSan(san: string): MoveNode {
+        const existingNode = this.children.find(m => m.name == san);
+        if (existingNode !== undefined) return existingNode
+
+        const newNode = new MoveNode(san,
+            !this.isWhiteTurn,
+            [],
+            this,
+            MoveNode.calcNextFenFromSan(this.fen, san))
+        this.children.push(newNode)
+        return newNode
     }
 }

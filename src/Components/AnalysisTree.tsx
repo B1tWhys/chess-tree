@@ -9,6 +9,7 @@ import {MouseEvent} from "react";
 
 interface Props {
     gameTree: GameTree
+    selectedNodeIdx: number
     onMoveMouseover?: (MoveNode) => void
 }
 
@@ -16,12 +17,12 @@ const genLinkPath = linkVertical()
     .x(d => d.x)
     .y(d => d.y);
 
-export function AnalysisTree({gameTree, onMoveMouseover}: Props) {
+export function AnalysisTree({gameTree, selectedNodeIdx, onMoveMouseover}: Props) {
     const containerRef = useRef()
     const treeRef = useRef()
-    const [width, setWidth] = useState(0);
-    const [height, setHeight] = useState(0);
-    const [selectedNode, setSelectedNode] = useState<MoveNode|null>(null)
+    const [width, setWidth] = useState(0)
+    const [height, setHeight] = useState(0)
+    const selectedNode = gameTree.moveArray[selectedNodeIdx]
 
     useEffect(() => {
         const element = containerRef.current;
@@ -36,7 +37,7 @@ export function AnalysisTree({gameTree, onMoveMouseover}: Props) {
         resizeObserver.observe(element)
 
         return () => resizeObserver.unobserve(element)
-    }, [width, height]);
+    }, [width, height])
 
     useEffect(() => {
         panzoom(treeRef.current)
@@ -44,7 +45,7 @@ export function AnalysisTree({gameTree, onMoveMouseover}: Props) {
 
     const theme = useTheme();
     const nodeTree = useMemo(() => {
-        const treeRoot = hierarchy(gameTree.firstMoves[0])
+        const treeRoot = hierarchy(gameTree.rootMoves[0])
         treeRoot.sort()
         const [dx, dy] = [100, 155];
         tree().nodeSize([dx, dy])(treeRoot)
@@ -65,7 +66,6 @@ export function AnalysisTree({gameTree, onMoveMouseover}: Props) {
 
     function handleNodeMouseover(mouseEvent: MouseEvent<SVGCircleElement>, moveNode: MoveNode) {
         mouseEvent.stopPropagation()
-        setSelectedNode(moveNode)
         if (onMoveMouseover) {
             onMoveMouseover(moveNode)
         }
