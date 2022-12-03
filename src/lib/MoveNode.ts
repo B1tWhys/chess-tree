@@ -62,9 +62,9 @@ export class MoveNode {
 	}
 
 	static merge(...moves: MoveNode[]): MoveNode[] {
-		let combinedMoves = new Map<string, MoveNode>();
+		const combinedMoves = new Map<string, MoveNode>();
 		moves.forEach((m) => {
-			let existingMove = combinedMoves.get(m.name);
+			const existingMove = combinedMoves.get(m.name);
 			if (existingMove) {
 				existingMove.children = MoveNode.merge(...existingMove.children, ...m.children);
 			} else {
@@ -76,7 +76,7 @@ export class MoveNode {
 
 	toChessopsNode(): ChildNode<PgnNodeData> {
 		const data = { san: this.name };
-		let childNode = new ChildNode(data);
+		const childNode = new ChildNode(data);
 		childNode.children = this.children.map((m) => m.toChessopsNode());
 		return childNode;
 	}
