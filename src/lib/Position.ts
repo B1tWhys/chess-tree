@@ -1,5 +1,5 @@
-import {MoveNode} from "./MoveNode";
+import { MoveNode } from './MoveNode';
 
 export class Position {
-    currentMove: MoveNode
+	currentMove: MoveNode;
 }
