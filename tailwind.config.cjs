@@ -6,6 +6,10 @@ module.exports = {
 			colors: {
 				'black-move': '#769656',
 				'white-move': '#eeeed2'
+			},
+			strokeWidth: {
+				3: 3,
+				7: 7
 			}
 		}
 	},
