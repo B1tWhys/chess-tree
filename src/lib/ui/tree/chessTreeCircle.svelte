@@ -1,6 +1,7 @@
 <script lang="ts">
 	export let name: string;
 	export let isWhiteTurn: boolean;
+	export let position = { x: 0, y: 0 };
 
 	let highlight = false;
 
@@ -13,7 +14,11 @@
 	}
 </script>
 
-<g on:mouseenter={onMouseOver} on:mouseleave={onMouseOff}>
+<g
+	transform="translate({position.x}, {position.y})"
+	on:mouseenter={onMouseOver}
+	on:mouseleave={onMouseOff}
+>
 	<circle
 		r="40"
 		class:fill-black-move={!isWhiteTurn}
