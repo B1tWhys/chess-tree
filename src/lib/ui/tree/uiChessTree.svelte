@@ -11,6 +11,7 @@
 	import type GameTree from '$lib/core/GameTree';
 	import { onMount } from 'svelte';
 	import type { MoveNode } from '$lib/core/MoveNode';
+	import { selectedMoveNode } from '$lib/stores';
 
 	export let gameTree: GameTree;
 
@@ -28,6 +29,10 @@
 	function calcLinkPathData(link: HierarchyPointLink<any>) {
 		const avgY = (link.source.y + link.target.y) / 2;
 		return `M ${link.source.x} ${link.source.y} C ${link.source.x} ${avgY}, ${link.target.x} ${avgY}, ${link.target.x} ${link.target.y}`;
+	}
+
+	function handleMouseOver(e: any, d: HierarchyPointNode<MoveNode>) {
+		selectedMoveNode.set(d.data);
 	}
 
 	onMount(() => {
@@ -50,7 +55,8 @@
 			.data(treeLayout)
 			.enter()
 			.append('g')
-			.attr('transform', (d) => `translate(${d.x}, ${d.y})`);
+			.attr('transform', (d) => `translate(${d.x}, ${d.y})`)
+			.on('mouseover', handleMouseOver);
 
 		nodeGroups
 			.append('circle')
