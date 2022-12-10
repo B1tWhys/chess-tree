@@ -11,7 +11,6 @@
 	import type GameTree from '$lib/core/GameTree';
 	import { onMount } from 'svelte';
 	import type { MoveNode } from '$lib/core/MoveNode';
-	import ChessTreeCircle from './chessTreeCircle.svelte';
 
 	export let gameTree: GameTree;
 
@@ -25,13 +24,6 @@
 	function handleZoom(e: ZoomBehavior<Element, any>) {
 		select(panZoomContainer).attr('transform', e.transform as any);
 	}
-
-	/*
-	<g transform="translate(150, 310)">
-		<circle r="40" fill="#eeeed2" stroke="#769656" stroke-width="7"></circle>
-		<text text-anchor="middle" font-family="Roboto Mono, monospace" font-weight="600" font-size="35" fill="#769656" dy=".35em">b4</text>
-		</g>
-	*/
 
 	onMount(() => {
 		const treeGen = tree().nodeSize([100, 150]);
@@ -63,7 +55,9 @@
 			.text((d) => d.data.name);
 
 		let z = zoom().on('zoom', handleZoom);
-		select(treeSvg).call(z as any);
+		select(treeSvg)
+			.call(z as any)
+			.call(z.translateBy as any, width / 3, 100);
 	});
 </script>
 
