@@ -5,6 +5,7 @@
 		tree,
 		zoom,
 		type HierarchyNode,
+		type HierarchyPointLink,
 		type HierarchyPointNode,
 		type ZoomBehavior
 	} from 'd3';
@@ -28,8 +29,23 @@
 	onMount(() => {
 		const treeGen = tree().nodeSize([100, 150]);
 		const treeLayout = treeGen(root) as HierarchyPointNode<MoveNode>;
+
+		// links
+
+		select(panZoomContainer)
+			.selectAll('line')
+			.data(treeLayout.links())
+			.enter()
+			.append('line')
+			.attr('x1', (d: HierarchyPointLink<MoveNode>) => d.source.x)
+			.attr('y1', (d: HierarchyPointLink<MoveNode>) => d.source.y)
+			.attr('x2', (d: HierarchyPointLink<MoveNode>) => d.target.x)
+			.attr('y2', (d: HierarchyPointLink<MoveNode>) => d.target.y)
+			.attr('class', 'stroke-7 stroke-neutral-300');
+
+		// nodes
 		const nodeGroups = select(panZoomContainer)
-			.selectAll('circle')
+			.selectAll('g')
 			.data(treeLayout)
 			.enter()
 			.append('g')
@@ -53,6 +69,8 @@
 			.attr('font-size', '25')
 			.attr('dy', '.35em')
 			.text((d) => d.data.name);
+
+		// panning/zooming
 
 		let z = zoom().on('zoom', handleZoom);
 		select(treeSvg)
