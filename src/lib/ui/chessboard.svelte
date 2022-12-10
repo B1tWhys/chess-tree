@@ -15,7 +15,7 @@
 	});
 </script>
 
-<div class="absolute box-border right-0 border-l-4 border-b-4 border-white rounded-bl-md">
+<div class="absolute box-border right-0 border-l-4 border-b-4 border-white rounded-bl-md z-50">
 	<div bind:this={board} class="w-80 h-80" />
 </div>
 

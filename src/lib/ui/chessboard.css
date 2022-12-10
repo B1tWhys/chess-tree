@@ -7,11 +7,11 @@
 }
 
 .cg-wrap coords.files {
-    bottom: -6px;
-    left: -15px;
-    flex-flow: row;
-    width: 100%;
-    height: 16px;
-    text-transform: uppercase;
-    text-align: center;
-  }
+	bottom: -6px;
+	left: -15px;
+	flex-flow: row;
+	width: 100%;
+	height: 16px;
+	text-transform: uppercase;
+	text-align: center;
+}
