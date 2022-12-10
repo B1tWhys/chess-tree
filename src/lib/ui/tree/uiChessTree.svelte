@@ -62,7 +62,10 @@
 
 		nodeGroups
 			.append('text')
-			.attr('class', (d) => (d.data.isWhiteTurn ? 'fill-black-move' : 'fill-white-move'))
+			.attr(
+				'class',
+				(d) => 'cursor-default ' + (d.data.isWhiteTurn ? 'fill-black-move' : 'fill-white-move')
+			)
 			.attr('text-anchor', 'middle')
 			.attr('font-family', 'Roboto Mono, monospace')
 			.attr('font-weight', 600)
