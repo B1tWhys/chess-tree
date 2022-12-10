@@ -4,7 +4,6 @@
 		select,
 		tree,
 		zoom,
-		type HierarchyNode,
 		type HierarchyPointLink,
 		type HierarchyPointNode,
 		type ZoomBehavior
