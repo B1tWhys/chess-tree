@@ -54,23 +54,27 @@
 			{/each}
 
 			{#each treeLayout.descendants() as node}
+				{@const isSelectedNode = node.data === $selectedMoveNode}
+				{@const isWhiteTurn = node.data.isWhiteTurn}
+
 				<g
 					transform={`translate(${node.x}, ${node.y})`}
 					on:mouseover={() => handleMouseOver(node.data)}
 					on:focus={() => {}}
 				>
 					<circle
-						class="stroke-7"
-						class:fill-white-move={node.data.isWhiteTurn}
-						class:fill-black-move={!node.data.isWhiteTurn}
-						class:stroke-white-move={!node.data.isWhiteTurn}
-						class:stroke-black-move={node.data.isWhiteTurn}
+						class="stroke-7 "
+						class:fill-white-move={isWhiteTurn}
+						class:fill-black-move={!isWhiteTurn}
+						class:stroke-white-move={!isWhiteTurn && !isSelectedNode}
+						class:stroke-black-move={isWhiteTurn && !isSelectedNode}
+						class:stroke-blue-400={isSelectedNode}
 						r="40"
 					/>
 					<text
 						class="cursor-default"
-						class:fill-white-move={!node.data.isWhiteTurn}
-						class:fill-black-move={node.data.isWhiteTurn}
+						class:fill-white-move={!isWhiteTurn}
+						class:fill-black-move={isWhiteTurn}
 						text-anchor="middle"
 						font-family="Roboto Mono, monospace"
 						font-weight="600"
