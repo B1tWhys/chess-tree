@@ -25,15 +25,12 @@ export class MoveNode {
 		this.fen = fen;
 	}
 
-	static fromChessopsNode(chessOpsNode: ChildNode<PgnNodeData>, parentMoveNode?: MoveNode) {
+	static fromChessopsNode(chessOpsNode: ChildNode<PgnNodeData>, prevFen: string, parentMoveNode?: MoveNode) {
 		let isWhiteTurn: boolean;
-		let prevFen: string;
 		if (parentMoveNode) {
 			isWhiteTurn = !parentMoveNode.isWhiteTurn;
-			prevFen = parentMoveNode.fen!;
 		} else {
 			isWhiteTurn = true;
-			prevFen = INITIAL_EPD;
 		}
 		const nextFen = this.calcNextFen(prevFen, chessOpsNode);
 		const newNode = new MoveNode(
@@ -43,7 +40,7 @@ export class MoveNode {
 			parentMoveNode,
 			nextFen
 		);
-		newNode.children = chessOpsNode.children.map((n) => this.fromChessopsNode(n, newNode));
+		newNode.children = chessOpsNode.children.map((n) => this.fromChessopsNode(n, nextFen, newNode));
 		return newNode;
 	}
 

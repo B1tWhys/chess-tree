@@ -1,6 +1,7 @@
 import { MoveNode } from './MoveNode';
 import { makePgn, Node, parsePgn } from 'chessops/pgn';
 import type { Game, PgnNodeData } from 'chessops/pgn';
+import { INITIAL_EPD } from 'chessops/fen';
 
 export default class GameTree {
 	rootMoves: Array<MoveNode>;
@@ -25,9 +26,10 @@ export default class GameTree {
 
 	static fromPgnStr(pgnStr: string): GameTree {
 		const games: Game<PgnNodeData>[] = parsePgn(pgnStr);
-		const firstMoves = games.flatMap((game) =>
-			game.moves.children.map((m) => MoveNode.fromChessopsNode(m, undefined))
-		);
+		const firstMoves = games.flatMap((game) => {
+			const startingFen = game.headers.get('FEN') || INITIAL_EPD;
+			return game.moves.children.map((m) => MoveNode.fromChessopsNode(m, startingFen, undefined));
+		});
 		return new GameTree(firstMoves);
 	}
 
